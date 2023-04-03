@@ -25,7 +25,7 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [bookSave, { error, data }] = useMutation(SAVE_BOOK); 
+  const [saveBook, { error }] = useMutation(SAVE_BOOK); 
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
@@ -49,14 +49,18 @@ const SearchBooks = () => {
       }
 
       const { items } = await response.json();
+      console.log(items); 
 
       const bookData = items.map((book) => ({
         bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
+        authors: book.volumeInfo.authors || ['No author to display'],
+        link: book.volumeInfo.infoLink || '', 
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
+
+      console.log(bookData); 
 
       setSearchedBooks(bookData);
       setSearchInput('');
@@ -70,7 +74,7 @@ const SearchBooks = () => {
 
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-
+    console.log(bookToSave); 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -79,10 +83,15 @@ const SearchBooks = () => {
     }
 
     try {
+      console.log(bookToSave); 
       // const response = await saveBook(bookToSave, token);
-      const { data } = await bookSave({
-        variables: { ...bookToSave },
+      const { data } = await saveBook({
+        variables: { newBook: bookToSave },
+        // variables: {
+        //   bookId, 
+        // }
       });
+      console.log(data); 
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
@@ -128,7 +137,7 @@ const SearchBooks = () => {
           {searchedBooks.map((book) => {
             return (
               <Col md="4">
-                <Card key={book.bookId} border='dark'>
+                <Card key={book.id} border='dark'>
                   {book.image ? (
                     <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
                   ) : null}
