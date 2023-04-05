@@ -49,8 +49,8 @@ const SearchBooks = () => {
       }
 
       const { items } = await response.json();
-      console.log(items); 
 
+      // Save GoogleBooks query in json to better format handleSaveBook
       const bookData = items.map((book) => ({
         bookId: book.id,
         title: book.volumeInfo.title,
@@ -60,7 +60,6 @@ const SearchBooks = () => {
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
 
-      console.log(bookData); 
 
       setSearchedBooks(bookData);
       setSearchInput('');
