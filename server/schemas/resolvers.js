@@ -11,10 +11,15 @@ const resolvers = {
     // Returns logged in user
     me: async (parent, args, context) => {
       if (context.user) {
-        return User.findOne({ _id: context.user._id }).populate("savedBooks");
+        const me = await User.findOne({ _id: context.user._id }).populate("savedBooks");
+        console.log(me); 
+        return me; 
       }
       throw new AuthenticationError("You need to be logged in!");
     },
+    // books: async(parent, args, context) => {
+    //   return await Book.
+    // }
   },
 
   Mutation: {
